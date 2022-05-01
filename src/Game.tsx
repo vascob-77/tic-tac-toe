@@ -2,7 +2,12 @@ import { useEffect } from "react";
 import { useState } from "react";
 import Square from "./Square";
 
+type Scores = {
+  [key:string]:number;
+}
+
 const INITIAL_GAME_STATE = ["", "", "", "", "", "", "", "", ""];
+const INITIAL_SCORES: Scores = {X:0,O:0}
 const WINNING_COMBOS = [
   [1,2,3],
   [3,4,5],
@@ -18,6 +23,7 @@ function Game() {
 
   const [gameState, setGameState] = useState(INITIAL_GAME_STATE);
   const [currentPlayer, setCurrentPlayer] = useState('X')
+  const [scores,setScores] = useState(INITIAL_SCORES);
 
   useEffect(() => {
     checkForWinner();
@@ -28,10 +34,16 @@ function Game() {
 
   const handleWin = () => {
     window.alert(`Congrats player ${currentPlayer}! You are the winner !`);
+
+    const newPlayerScore = scores[currentPlayer] + 1;
+    const newScores = {...scores};
+    newScores[currentPlayer] = newPlayerScore;
+    setScores(newScores);
+
     resetBoard();
   }
   const handleDraw = () => {
-    window.alert(`The game is en ded in a draw`)
+    window.alert(`The game is en ded in a draw`);
     resetBoard();
   }
 
@@ -41,9 +53,9 @@ function Game() {
     for (let i = 0; i < WINNING_COMBOS.length; i++) {
       const winCombo = WINNING_COMBOS[i];
 
-      let a = gameState[winCombo[0]]
-      let b = gameState[winCombo[1]]
-      let c = gameState[winCombo[2]]
+      let a = gameState[winCombo[0]];
+      let b = gameState[winCombo[1]];
+      let c = gameState[winCombo[2]];
       
       if([a,b,c].includes('')){
         continue;
@@ -56,11 +68,11 @@ function Game() {
     }
 
     if(roundWon){
-      setTimeout(() => handleWin(),500)
+      setTimeout(() => handleWin(),500);
       return
     }
     if(!gameState.includes("")){
-      setTimeout(() => handleDraw(),500)
+      setTimeout(() => handleDraw(),500);
       window.alert('The game ended in a draw');
       return
     }
@@ -82,9 +94,9 @@ function Game() {
     }
 
     
-    const newValues = [...gameState]
+    const newValues = [...gameState];
     newValues[cellIndex] = currentPlayer;
-    setGameState(newValues)
+    setGameState(newValues);
 
     
   }
@@ -98,6 +110,11 @@ function Game() {
           {gameState.map((player, index) => (
             <Square onClick={handleCellClick} key={index} {...{index,player}} />
           ))}
+        </div>
+        <div className="mx-auto w-96 text-2xl text-serif text-white">
+          <p className="mt-5">Next Player: <span>{currentPlayer}</span></p>
+          <p className="mt-5">Player X Wins: <span>{scores["X"]}</span></p>
+          <p className="mt-5">Player O Wins: <span>{scores["O"]}</span></p>
         </div>
       </div>
     </div>
