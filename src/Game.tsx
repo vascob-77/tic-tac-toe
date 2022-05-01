@@ -19,6 +19,8 @@ const WINNING_COMBOS = [
   [2,5,8],
 ]
 
+
+
 function Game() {
 
   const [gameState, setGameState] = useState(INITIAL_GAME_STATE);
@@ -26,6 +28,16 @@ function Game() {
   const [scores,setScores] = useState(INITIAL_SCORES);
 
   useEffect(() => {
+    const storedScores = localStorage.getItem("scores");
+    if(storedScores){
+      setScores(JSON.parse(storedScores))
+    }
+  },[])
+
+  useEffect(() => {
+    if(gameState === INITIAL_GAME_STATE){
+      return;
+    }
     checkForWinner();
   
   },[gameState])
@@ -39,7 +51,7 @@ function Game() {
     const newScores = {...scores};
     newScores[currentPlayer] = newPlayerScore;
     setScores(newScores);
-
+    localStorage.setItem("scores",JSON.stringify(newScores))
     resetBoard();
   }
   const handleDraw = () => {
